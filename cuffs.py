@@ -45,9 +45,3 @@ class Cuffs(plugins.Plugin):
             logging.error(
                 "[Cuffs] Cuffs is enabled, yet an unrestricted ap has made it past our filter and has been deauthenticated.")
             logging.debug(f"Unrestricted AP: {access_point}")
-
-    def on_association(self, agent, access_point):
-        if access_point['mac'] not in self.options['whitelist']:
-            logging.error(
-                "[Cuffs] Cuffs is enabled, yet an unrestricted ap has made it past our filter and has been assosciated.")
-            logging.debug(f"Unrestricted AP: {access_point}")
