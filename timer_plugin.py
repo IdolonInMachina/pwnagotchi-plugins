@@ -6,7 +6,7 @@ import pandas as pd
 
 class Timer(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.0.1'
+    __version__ = '0.0.2'
     __license__ = 'GPL3'
     __description__ = 'Measure the amount of time taken by the pwnagotchi to capture a handshake'
 
@@ -20,7 +20,10 @@ class Timer(plugins.Plugin):
             'First time to handshake': [],
             'First time between death and handshake': [],
         }
-        reset_times()
+        self.reset_times()
+
+    def on_epoch(self, agent, epoch, epoch_data):
+        self.reset_times()
 
     def on_loaded(self):
         logging.info("Timer plugin loaded")
