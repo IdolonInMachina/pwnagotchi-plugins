@@ -35,15 +35,15 @@ class Cuffs(plugins.Plugin):
 
     def on_wifi_update(self, agent, access_points):
         for ap in access_points:
-            if self.is_whitelisted(ap):
+            if not self.is_whitelisted(ap):
                 logging.error(
                     f"[Cuffs] Cuffs is enabled, yet an unrestricted ap ({ap['hostname']} from {ap['vendor']})has made it past our filter.")
                 logging.debug(f"Unrestricted AP: {ap}")
 
     def on_deauthentication(self, agent, access_point, client_station):
-        if self.is_whitelisted(access_point):
+        if not self.is_whitelisted(access_point):
             logging.error(
-                "[Cuffs] Cuffs is enabled, yet an unrestricted ap has made it past our filter and has been deauthenticated.")
+                f"[Cuffs] Cuffs is enabled, yet an unrestricted ap ({access_point['hostname']} from {access_point['vendor']})has made it past our filter and has been deauthenticated.")
             logging.debug(f"Unrestricted AP: {access_point}")
 
     def is_whitelisted(self, ap):
