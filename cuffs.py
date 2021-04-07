@@ -25,8 +25,8 @@ class Cuffs(plugins.Plugin):
     def on_unfiltered_ap_list(self, agent, access_points):
         count = 0
         for ap in access_points:
-            logging.info(f"[Cuffs Debug] type {type(ap)} {ap}")
-            if ap not in self.options['whitelist']:
+            # logging.info(f"[Cuffs Debug] type {type(ap)} {ap}")
+            if ap['mac'] not in self.options['whitelist']:
                 access_points.remove(ap)
                 count += 1
 
@@ -35,19 +35,19 @@ class Cuffs(plugins.Plugin):
 
     def on_wifi_update(self, agent, access_points):
         for ap in access_points:
-            if ap not in self.options['whitelist']:
+            if ap['mac'] not in self.options['whitelist']:
                 logging.error(
                     "[Cuffs] Cuffs is enabled, yet an unrestricted ap has made it past our filter.")
                 logging.debug(f"Unrestricted AP: {ap}")
 
     def on_deauthentication(self, agent, access_point, client_station):
-        if access_point not in self.options['whitelist']:
+        if access_point['mac'] not in self.options['whitelist']:
             logging.error(
                 "[Cuffs] Cuffs is enabled, yet an unrestricted ap has made it past our filter and has been deauthenticated.")
             logging.debug(f"Unrestricted AP: {ap}")
 
     def on_association(self, agent, access_point):
-        if access_point not in self.options['whitelist']:
+        if access_point['mac'] not in self.options['whitelist']:
             logging.error(
                 "[Cuffs] Cuffs is enabled, yet an unrestricted ap has made it past our filter and has been assosciated.")
             logging.debug(f"Unrestricted AP: {ap}")
