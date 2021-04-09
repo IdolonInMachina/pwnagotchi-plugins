@@ -26,7 +26,7 @@ class Timer(plugins.Plugin):
         self.reset_times()
 
     def on_loaded(self):
-        logging.info("Timer plugin loaded")
+        logging.info("[Timer] plugin loaded")
 
     def on_wifi_update(self, agent, access_points):
         time = datetime.datetime.now()
@@ -75,7 +75,8 @@ class Timer(plugins.Plugin):
                                               'First time to deauth',
                                               'First time to handshake',
                                               'First time between death and handshake'])
-        df.to_csv('pwnagotchi_times.csv')
+        logging.info('[Timer] data saved')
+        df.to_csv('/home/pi/data/pwnagotchi_times.csv')
 
     def calculate_difference_in_seconds(self, past, future):
         difference = future - past
