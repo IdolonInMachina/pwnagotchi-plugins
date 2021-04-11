@@ -6,7 +6,7 @@ import pandas as pd
 
 class Timer(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.0.8'
+    __version__ = '0.0.9'
     __license__ = 'GPL3'
     __description__ = 'Measure the amount of time taken by the pwnagotchi to capture a handshake'
 
@@ -16,9 +16,6 @@ class Timer(plugins.Plugin):
             'Time to deauth': [],
             'Time to handshake': [],
             'Time between deauth and handshake': [],
-            'First time to deauth': [],
-            'First time to handshake': [],
-            'First time between death and handshake': [],
         }
         self.wifi_update_time = None
         self.wifi_deauth_time = None
@@ -36,70 +33,39 @@ class Timer(plugins.Plugin):
 
     def on_wifi_update(self, agent, access_points):
         time = datetime.datetime.now()
-        if self.first_wifi_time is None:
-            self.first_wifi_time = time
         self.wifi_update_time = time
 
     def on_deauthentication(self, agent, access_point, client_station):
         time = datetime.datetime.now()
-        if self.first_wifi_deauth_time is None:
-            self.first_wifi_deauth_time = time
         self.wifi_deauth_time = time
 
     def on_handshake(self, agent, filename, access_point, client_station):
         time = datetime.datetime.now()
-        if self.first_wifi_handshake_time is None:
-            self.first_wifi_handshake_time = time
         self.wifi_handshake_time = time
 
         self.process_data()
         self.reset_times()
 
     def process_data(self):
-        all_not_none = True
-        if self.wifi_update_time is not None and self.wifi_deauth_time is not None:
-            self.data['Time to deauth'].append(
-                self.calculate_difference_in_seconds(
-                    self.wifi_update_time, self.wifi_deauth_time))
-        else:
-            all_not_none = False
-        if self.wifi_update_time is not None and self.wifi_handshake_time is not None:
-            self.data['Time to handshake'].append(
-                self.calculate_difference_in_seconds(
-                    self.wifi_update_time, self.wifi_handshake_time))
-        else:
-            all_not_none = False
-        if self.wifi_deauth_time is not None and self.wifi_handshake_time is not None:
-            self.data['Time between deauth and handshake'].append(
-                self.calculate_difference_in_seconds(
-                    self.wifi_deauth_time, self.wifi_handshake_time))
-        else:
-            all_not_none = False
+        # We have captured a handshake, so we need to check if it was a passive capture
+        if self.wifi_deauth_time is None:
+            # We haven't deauthed anyone, so this was just a passive capture
+            # Not relevant to the data we want
+            return
 
-        if self.first_wifi_time is not None and self.first_wifi_deauth_time is not None:
-            self.data['First time to deauth'].append(
-                self.calculate_difference_in_seconds(
-                    self.first_wifi_time, self.first_wifi_deauth_time))
-        else:
-            all_not_none = False
-        if self.first_wifi_time is not None and self.first_wifi_handshake_time is not None:
-            self.data['First time to handshake'].append(
-                self.calculate_difference_in_seconds(
-                    self.first_wifi_time, self.first_wifi_handshake_time))
-        else:
-            all_not_none = False
-        if self.first_wifi_deauth_time is not None and self.first_wifi_handshake_time is not None:
-            self.data['First time between death and handshake'].append(
-                self.calculate_difference_in_seconds(
-                    self.first_wifi_deauth_time, self.first_wifi_handshake_time))
-        else:
-            all_not_none = False
+        self.data['Time to deauth'].append(
+            self.calculate_difference_in_seconds(
+                self.wifi_update_time, self.wifi_deauth_time))
+        self.data['Time to handshake'].append(
+            self.calculate_difference_in_seconds(
+                self.wifi_update_time, self.wifi_handshake_time))
+        self.data['Time between deauth and handshake'].append(
+            self.calculate_difference_in_seconds(
+                self.wifi_deauth_time, self.wifi_handshake_time))
+
         df = pd.DataFrame(self.data, columns=['Time to deauth',
                                               'Time to handshake',
-                                              'Time between deauth and handshake',
-                                              'First time to deauth',
-                                              'First time to handshake',
-                                              'First time between death and handshake'])
+                                              'Time between deauth and handshake', ])
         logging.info('[Timer] data saved')
         logging.info(df)
         df.to_csv('/home/pi/data/pwnagotchi_times.csv')
@@ -109,6 +75,4 @@ class Timer(plugins.Plugin):
         return difference.total_seconds()
 
     def reset_times(self):
-        self.first_wifi_time = None
-        self.first_wifi_deauth_time = None
-        self.first_wifi_handshake_time = None
+        pass
