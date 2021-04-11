@@ -17,9 +17,6 @@ class Timer(plugins.Plugin):
             'Time to handshake': [],
             'Time between deauth and handshake': [],
         }
-        self.wifi_update_time = None
-        self.wifi_deauth_time = None
-        self.wifi_handshake_time = None
         self.reset_times()
 
     def on_epoch(self, agent, epoch, epoch_data):
@@ -75,4 +72,6 @@ class Timer(plugins.Plugin):
         return difference.total_seconds()
 
     def reset_times(self):
-        pass
+        self.wifi_update_time = None
+        self.wifi_deauth_time = None
+        self.wifi_handshake_time = None
