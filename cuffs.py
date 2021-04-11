@@ -10,6 +10,7 @@ class Cuffs(plugins.Plugin):
 
     def __init__(self):
         logging.debug("[Cuffs] Cuffs plugin created")
+        self.filtered_ap_list = None
 
     def on_loaded(self):
         logging.info("[Cuffs] Plugin loading")
@@ -30,17 +31,18 @@ class Cuffs(plugins.Plugin):
             if not self.is_whitelisted(ap):
                 access_points.remove(ap)
                 count += 1
-        agent.session['wifi']['aps'] = access_points
+        self.filtered_ap_list = access_points
         logging.info(f"[Cuffs] Removed {count} unrestricted ap's")
         logging.info(
             f"[Cuffs Debug] Filtered AP list: {[ap['mac'] for ap in access_points]}")
 
     def on_wifi_update(self, agent, access_points):
+        agent.access_points = self.filtered_ap_list
         for ap in access_points:
             # If the app is not being whitelisted by cuffs, it should not be here
             if not self.is_whitelisted(ap):
                 logging.error(
-                    f"[Cuffs] Cuffs is enabled, yet an unrestricted ap ({ap['hostname']} from {ap['vendor']})has made it past our filter.")
+                    f"[Cuffs] Cuffs is enabled, yet an unrestricted ap ({ap['hostname']} from {ap['vendor']}) made it past our filter.")
                 logging.debug(f"Unrestricted AP: {ap}")
         logging.info(
             f"[Cuffs Debug] Filtered AP list: {[ap['mac'] for ap in access_points]}")
