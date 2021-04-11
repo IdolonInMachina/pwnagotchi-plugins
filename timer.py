@@ -6,7 +6,7 @@ import pandas as pd
 
 class Timer(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.0.6'
+    __version__ = '0.0.7'
     __license__ = 'GPL3'
     __description__ = 'Measure the amount of time taken by the pwnagotchi to capture a handshake'
 
@@ -20,6 +20,9 @@ class Timer(plugins.Plugin):
             'First time to handshake': [],
             'First time between death and handshake': [],
         }
+        self.wifi_update_time = None
+        self.wifi_deauth_time = None
+        self.wifi_handshake_time = None
         self.reset_times()
 
     def on_epoch(self, agent, epoch, epoch_data):
