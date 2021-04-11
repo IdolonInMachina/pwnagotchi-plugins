@@ -76,6 +76,7 @@ class Timer(plugins.Plugin):
                                               'First time to handshake',
                                               'First time between death and handshake'])
         logging.info('[Timer] data saved')
+        logging.info(df)
         df.to_csv('/home/pi/data/pwnagotchi_times.csv')
 
     def calculate_difference_in_seconds(self, past, future):
