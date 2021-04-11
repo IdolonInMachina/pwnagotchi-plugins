@@ -6,7 +6,7 @@ import pandas as pd
 
 class Timer(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.0.7'
+    __version__ = '0.0.8'
     __license__ = 'GPL3'
     __description__ = 'Measure the amount of time taken by the pwnagotchi to capture a handshake'
 
@@ -16,7 +16,7 @@ class Timer(plugins.Plugin):
             'Time to deauth': [],
             'Time to handshake': [],
             'Time between deauth and handshake': [],
-            'First time to death': [],
+            'First time to deauth': [],
             'First time to handshake': [],
             'First time between death and handshake': [],
         }
