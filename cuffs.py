@@ -33,7 +33,7 @@ class Cuffs(plugins.Plugin):
             self.agent = agent
             # Overwrite the get_access_points function to be our custom one
             logging.info(
-                "[Cuffs] Overwriting get_access_points to custom function")
+                "[Cuffs] Overwriting get_access_points to custom function\nPlease ignore any error messages from Cuffs this epoch.")
             agent.get_access_points = self.custom_get_access_points
 
         count = 0
