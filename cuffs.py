@@ -4,7 +4,7 @@ import pwnagotchi.plugins as plugins
 
 class Cuffs(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.1.3'
+    __version__ = '0.1.4'
     __license__ = 'GPL3'
     __description__ = 'Restricts the pwnagotchi to only attack specified ap\'s'
 
@@ -44,11 +44,8 @@ class Cuffs(plugins.Plugin):
                 count += 1
         self.filtered_ap_list = access_points
         logging.info(f"[Cuffs] Removed {count} unrestricted ap's")
-        logging.info(
-            f"[Cuffs] Filtered AP list: {[ap['mac'] for ap in access_points]}")
 
     def on_wifi_update(self, agent, access_points):
-        agent.access_points = self.filtered_ap_list
         for ap in access_points:
             # If the app is not being whitelisted by cuffs, it should not be here
             if not self.is_whitelisted(ap):
@@ -69,10 +66,7 @@ class Cuffs(plugins.Plugin):
         '''
         for whitelisted_ap in self.options['whitelist']:
             if whitelisted_ap.lower() == ap['mac'].lower() or whitelisted_ap.lower() == ap['hostname'].lower():
-                logging.info(
-                    f"[Cuffs Debug] allowing {ap['mac']} through filter")
                 return True
-        logging.info(f"[Cuffs Debug] restricting {ap['mac']} from filter")
         return False
 
     def custom_get_access_points(self):
