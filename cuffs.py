@@ -4,7 +4,7 @@ import pwnagotchi.plugins as plugins
 
 class Cuffs(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.0.6'
+    __version__ = '0.0.7'
     __license__ = 'GPL3'
     __description__ = 'Restricts the pwnagotchi to only attack specified ap\'s'
 
@@ -30,7 +30,7 @@ class Cuffs(plugins.Plugin):
             if not self.is_whitelisted(ap):
                 access_points.remove(ap)
                 count += 1
-
+        agent.session['wifi']['aps'] = access_points
         if (count > 0):
             logging.info(f"[Cuffs] Removed {count} unrestricted ap's")
 
