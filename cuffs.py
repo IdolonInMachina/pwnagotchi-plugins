@@ -11,6 +11,7 @@ class Cuffs(plugins.Plugin):
     def __init__(self):
         logging.debug("[Cuffs] Cuffs plugin created")
         self.filtered_ap_list = None
+        self.agent = None
 
     def on_loaded(self):
         logging.info("[Cuffs] Plugin loading")
@@ -21,12 +22,15 @@ class Cuffs(plugins.Plugin):
         logging.info("[Cuffs] Plugin loaded")
 
     def on_unload(self, ui):
+        self.agent.get_access_points = self.original_get_access_points
+        self.original_get_access_points = None
         logging.info("[Cuffs] Plugin unloaded")
 
     def on_unfiltered_ap_list(self, agent, access_points):
         # Store the original get_access_points function if we do not already have it
         if self.original_get_access_points is None:
             self.original_get_access_points = agent.get_access_points
+            self.agent = agent
         # Overwrite the get_access_points function to be our custom one
         agent.get_access_points = self.custom_get_access_points
 
