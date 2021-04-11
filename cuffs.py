@@ -4,7 +4,7 @@ import pwnagotchi.plugins as plugins
 
 class Cuffs(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.1.0'
+    __version__ = '0.1.1'
     __license__ = 'GPL3'
     __description__ = 'Restricts the pwnagotchi to only attack specified ap\'s'
 
@@ -17,16 +17,21 @@ class Cuffs(plugins.Plugin):
 
         if 'whitelist' not in self.options:
             self.options['whitelist'] = list()
-
+        self.original_get_access_points = None
         logging.info("[Cuffs] Plugin loaded")
 
     def on_unload(self, ui):
         logging.info("[Cuffs] Plugin unloaded")
 
     def on_unfiltered_ap_list(self, agent, access_points):
+        # Store the original get_access_points function if we do not already have it
+        if self.original_get_access_points is None:
+            self.original_get_access_points = agent.get_access_points
+        # Overwrite the get_access_points function to be our custom one
+        agent.get_access_points = self.custom_get_access_points
+
         count = 0
         for ap in access_points:
-            # logging.info(f"[Cuffs Debug] type {type(ap)} {ap}")
             # If the ap is being restricted by cuffs, remove it
             if not self.is_whitelisted(ap):
                 access_points.remove(ap)
@@ -65,3 +70,7 @@ class Cuffs(plugins.Plugin):
                 return True
         logging.info(f"[Cuffs Debug] restricting {ap['mac']} from filter")
         return False
+
+    def custom_get_access_points(self):
+        logging.info("[Cuffs] Overwrite successful!!!")
+        self.original_get_access_points()
