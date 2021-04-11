@@ -4,7 +4,7 @@ import pwnagotchi.plugins as plugins
 
 class Cuffs(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.0.7'
+    __version__ = '0.0.8'
     __license__ = 'GPL3'
     __description__ = 'Restricts the pwnagotchi to only attack specified ap\'s'
 
@@ -31,8 +31,9 @@ class Cuffs(plugins.Plugin):
                 access_points.remove(ap)
                 count += 1
         agent.session['wifi']['aps'] = access_points
-        if (count > 0):
-            logging.info(f"[Cuffs] Removed {count} unrestricted ap's")
+        logging.info(f"[Cuffs] Removed {count} unrestricted ap's")
+        logging.info(
+            f"[Cuffs Debug] Filtered AP list: {[ap['mac'] for ap in access_points]}")
 
     def on_wifi_update(self, agent, access_points):
         for ap in access_points:
@@ -41,6 +42,8 @@ class Cuffs(plugins.Plugin):
                 logging.error(
                     f"[Cuffs] Cuffs is enabled, yet an unrestricted ap ({ap['hostname']} from {ap['vendor']})has made it past our filter.")
                 logging.debug(f"Unrestricted AP: {ap}")
+        logging.info(
+            f"[Cuffs Debug] Filtered AP list: {[ap['mac'] for ap in access_points]}")
 
     def on_deauthentication(self, agent, access_point, client_station):
         # If the ap is not being whitelisted by cuffs, it should not be here
