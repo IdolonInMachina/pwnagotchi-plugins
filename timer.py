@@ -6,7 +6,7 @@ import pandas as pd
 
 class Timer(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.0.4'
+    __version__ = '0.0.5'
     __license__ = 'GPL3'
     __description__ = 'Measure the amount of time taken by the pwnagotchi to capture a handshake'
 
@@ -47,7 +47,7 @@ class Timer(plugins.Plugin):
         time = datetime.datetime.now()
         if self.first_wifi_handshake_time is None:
             self.first_wifi_handshake_time = time
-        self.wifi_handshake_time = time()
+        self.wifi_handshake_time = time
 
         self.process_data()
         self.reset_times()
