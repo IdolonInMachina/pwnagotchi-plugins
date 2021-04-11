@@ -4,7 +4,7 @@ import pwnagotchi.plugins as plugins
 
 class Cuffs(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.1.1'
+    __version__ = '0.1.2'
     __license__ = 'GPL3'
     __description__ = 'Restricts the pwnagotchi to only attack specified ap\'s'
 
@@ -31,8 +31,8 @@ class Cuffs(plugins.Plugin):
         if self.original_get_access_points is None:
             self.original_get_access_points = agent.get_access_points
             self.agent = agent
-        # Overwrite the get_access_points function to be our custom one
-        agent.get_access_points = self.custom_get_access_points
+            # Overwrite the get_access_points function to be our custom one
+            agent.get_access_points = self.custom_get_access_points
 
         count = 0
         for ap in access_points:
@@ -76,5 +76,15 @@ class Cuffs(plugins.Plugin):
         return False
 
     def custom_get_access_points(self):
-        logging.info("[Cuffs] Overwrite successful!!!")
-        self.original_get_access_points()
+        aps = []
+        try:
+            s = agent.session()
+            for ap in s['wifi']['aps']:
+                if ap['encryption'] == '' or ap['encryption'] == 'OPEN':
+                    continue
+                if self.is_whitelisted(ap):
+                    aps.append(ap)
+        except Exception as e:
+            logging.exception(f"Error while getting access points ({e})")
+        aps.sort(key=lambda ap: ap['channel'])
+        return agent.set_access_points(aps)
