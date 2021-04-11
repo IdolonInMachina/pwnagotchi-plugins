@@ -56,38 +56,38 @@ class Timer(plugins.Plugin):
         all_not_none = True
         if self.wifi_update_time is not None and self.wifi_deauth_time is not None:
             self.data['Time to deauth'].append(
-                calculate_difference_in_seconds(
+                self.calculate_difference_in_seconds(
                     self.wifi_update_time, self.wifi_deauth_time))
         else:
             all_not_none = False
         if self.wifi_update_time is not None and self.wifi_handshake_time is not None:
             self.data['Time to handshake'].append(
-                calculate_difference_in_seconds(
+                self.calculate_difference_in_seconds(
                     self.wifi_update_time, self.wifi_handshake_time))
         else:
             all_not_none = False
         if self.wifi_deauth_time is not None and self.wifi_handshake_time is not None:
             self.data['Time between deauth and handshake'].append(
-                calculate_difference_in_seconds(
+                self.calculate_difference_in_seconds(
                     self.wifi_deauth_time, self.wifi_handshake_time))
         else:
             all_not_none = False
 
         if self.first_wifi_time is not None and self.first_wifi_deauth_time is not None:
             self.data['First time to deauth'].append(
-                calculate_difference_in_seconds(
+                self.calculate_difference_in_seconds(
                     self.first_wifi_time, self.first_wifi_deauth_time))
         else:
             all_not_none = False
         if self.first_wifi_time is not None and self.first_wifi_handshake_time is not None:
             self.data['First time to handshake'].append(
-                calculate_difference_in_seconds(
+                self.calculate_difference_in_seconds(
                     self.first_wifi_time, self.first_wifi_handshake_time))
         else:
             all_not_none = False
         if self.first_wifi_deauth_time is not None and self.first_wifi_handshake_time is not None:
             self.data['First time between death and handshake'].append(
-                calculate_difference_in_seconds(
+                self.calculate_difference_in_seconds(
                     self.first_wifi_deauth_time, self.first_wifi_handshake_time))
         else:
             all_not_none = False
