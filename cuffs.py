@@ -4,7 +4,7 @@ import pwnagotchi.plugins as plugins
 
 class Cuffs(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.1.2'
+    __version__ = '0.1.3'
     __license__ = 'GPL3'
     __description__ = 'Restricts the pwnagotchi to only attack specified ap\'s'
 
@@ -32,6 +32,8 @@ class Cuffs(plugins.Plugin):
             self.original_get_access_points = agent.get_access_points
             self.agent = agent
             # Overwrite the get_access_points function to be our custom one
+            logging.info(
+                "[Cuffs] Overwriting get_access_points to custom function")
             agent.get_access_points = self.custom_get_access_points
 
         count = 0
@@ -43,7 +45,7 @@ class Cuffs(plugins.Plugin):
         self.filtered_ap_list = access_points
         logging.info(f"[Cuffs] Removed {count} unrestricted ap's")
         logging.info(
-            f"[Cuffs Debug] Filtered AP list: {[ap['mac'] for ap in access_points]}")
+            f"[Cuffs] Filtered AP list: {[ap['mac'] for ap in access_points]}")
 
     def on_wifi_update(self, agent, access_points):
         agent.access_points = self.filtered_ap_list
@@ -52,9 +54,7 @@ class Cuffs(plugins.Plugin):
             if not self.is_whitelisted(ap):
                 logging.error(
                     f"[Cuffs] Cuffs is enabled, yet an unrestricted ap ({ap['hostname']} from {ap['vendor']}) made it past our filter.")
-                logging.debug(f"Unrestricted AP: {ap}")
-        logging.info(
-            f"[Cuffs Debug] Filtered AP list: {[ap['mac'] for ap in access_points]}")
+                logging.debug(f"[Cuffs] Unrestricted AP: {ap}")
 
     def on_deauthentication(self, agent, access_point, client_station):
         # If the ap is not being whitelisted by cuffs, it should not be here
@@ -78,7 +78,8 @@ class Cuffs(plugins.Plugin):
     def custom_get_access_points(self):
         aps = []
         try:
-            s = agent.session()
+            s = self.agent.session()
+            plugins.on("unfiltered_ap_list", self.agent, s['wifi']['aps'])
             for ap in s['wifi']['aps']:
                 if ap['encryption'] == '' or ap['encryption'] == 'OPEN':
                     continue
@@ -87,4 +88,4 @@ class Cuffs(plugins.Plugin):
         except Exception as e:
             logging.exception(f"Error while getting access points ({e})")
         aps.sort(key=lambda ap: ap['channel'])
-        return agent.set_access_points(aps)
+        return self.agent.set_access_points(aps)
