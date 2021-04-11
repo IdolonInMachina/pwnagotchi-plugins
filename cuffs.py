@@ -4,7 +4,7 @@ import pwnagotchi.plugins as plugins
 
 class Cuffs(plugins.Plugin):
     __author__ = 'idoloninmachina@gmail.com'
-    __version__ = '0.0.9'
+    __version__ = '0.0.10'
     __license__ = 'GPL3'
     __description__ = 'Restricts the pwnagotchi to only attack specified ap\'s'
 
@@ -60,5 +60,8 @@ class Cuffs(plugins.Plugin):
         '''
         for whitelisted_ap in self.options['whitelist']:
             if whitelisted_ap.lower() == ap['mac'].lower() or whitelisted_ap.lower() == ap['hostname'].lower():
+                logging.info(
+                    f"[Cuffs Debug] allowing {ap['mac']} through filter")
                 return True
+        logging.info(f"[Cuffs Debug] restricting {ap['mac']} from filter")
         return False
